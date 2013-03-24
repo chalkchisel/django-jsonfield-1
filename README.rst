@@ -1,4 +1,4 @@
-django-jsonfield
+django-jsonfield (With Pyodbc Support up to SQL Server 2012 through django-pyodbc)
 ===================
 
 I had a serious need for a JSON field for django. There were a couple out
@@ -6,6 +6,10 @@ there, but none packaged up nicely on bitbucket/github that were usable
 with ``pip install -e``.
 
 So I took the code from `David Cramer's blog`_, and packaged it up.
+
+UPDATE: Support for Pyodbc fixed and tested from master version of https://github.com/michiya/django-pyodbc
+
+FOR NEW WINDOWS LINUX DRIVER: https://github.com/michiya/django-pyodbc/commit/e1ab6b9a282900c7076b42cf55b17f879b5fca2b
 
 Usage
 -----
