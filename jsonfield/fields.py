@@ -4,7 +4,7 @@ from django.utils import simplejson as json
 from django.utils.translation import ugettext_lazy as _
 
 from decimal import Decimal
-import datetime
+import datetime, pyodbc
 
 from utils import default
 from widgets import JSONWidget
@@ -62,7 +62,7 @@ class JSONField(models.Field):
         try:
             sid = transaction.savepoint()
             cursor.execute('SELECT \'{"a":"json object"}\'::json;')
-        except DatabaseError:
+        except (DatabaseError, pyodbc.ProgrammingError):
             transaction.savepoint_rollback(sid)
             return 'text'
         else:
