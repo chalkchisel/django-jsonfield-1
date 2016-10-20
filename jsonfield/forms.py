@@ -1,7 +1,7 @@
 from django import forms
 from django.utils import simplejson as json
 
-from widgets import JSONWidget
+from .widgets import JSONWidget
 
 
 class JSONFormField(forms.CharField):
