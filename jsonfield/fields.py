@@ -19,7 +19,7 @@ class JSONField(models.Field):
         'invalid': _(u"'%s' is not a valid JSON string.")
     }
     description = "JSON object"
-    
+
     def __init__(self, *args, **kwargs):
         if not kwargs.get('null', False):
             kwargs['default'] = kwargs.get('default', {})
@@ -29,7 +29,7 @@ class JSONField(models.Field):
                 self.validate(self.default(), None)
             else:
                 self.validate(self.default, None)
-        
+
     def formfield(self, **kwargs):
         defaults = {
             'form_class': JSONFormField,
@@ -37,7 +37,7 @@ class JSONField(models.Field):
         }
         defaults.update(**kwargs)
         return super(JSONField, self).formfield(**defaults)
-    
+
     def validate(self, value, model_instance):
         if not self.null and value is None:
             raise ValidationError(self.error_messages['null'])
@@ -55,7 +55,7 @@ class JSONField(models.Field):
 
     def get_internal_type(self):
         return 'TextField'
-    
+
     def db_type(self, connection):
         # Test to see if we support JSON
         cursor = connection.cursor()
@@ -64,10 +64,10 @@ class JSONField(models.Field):
             cursor.execute('SELECT \'{"a":"json object"}\'::json;')
         except (DatabaseError, pyodbc.ProgrammingError):
             transaction.savepoint_rollback(sid)
-            return 'text'
+            return 'nvarchar(max)'
         else:
             return 'json'
-    
+
     def to_python(self, value):
         if isinstance(value, str):
             if value == "":
@@ -85,14 +85,14 @@ class JSONField(models.Field):
 
     def get_db_prep_value(self, value, connection=None, prepared=None):
         return self.get_prep_value(value)
-    
+
     def get_prep_value(self, value):
         if value is None:
             if not self.null and self.blank:
                 return ""
             return None
         return json.dumps(value, default=default)
-    
+
     def get_prep_lookup(self, lookup_type, value):
         if lookup_type in ["exact", "iexact"]:
             return self.to_python(self.get_prep_value(value))
@@ -117,41 +117,41 @@ class JSONField(models.Field):
 
 class TypedJSONField(JSONField):
     """
-    
+
     """
     def __init__(self, *args, **kwargs):
         self.json_required_fields = kwargs.pop('required_fields', {})
         self.json_validators = kwargs.pop('validators', [])
-        
+
         super(TypedJSONField, self).__init__(*args, **kwargs)
-    
+
     def cast_required_fields(self, obj):
         if not obj:
             return
         for field_name, field_type in self.json_required_fields.items():
             obj[field_name] = field_type.to_python(obj[field_name])
-        
+
     def to_python(self, value):
         value = super(TypedJSONField, self).to_python(value)
-        
+
         if isinstance(value, list):
             for item in value:
                 self.cast_required_fields(item)
         else:
             self.cast_required_fields(value)
-        
+
         return value
-    
+
     def validate(self, value, model_instance):
         super(TypedJSONField, self).validate(value, model_instance)
-        
+
         for v in self.json_validators:
             if isinstance(value, list):
                 for item in value:
                     v(item)
             else:
                 v(value)
-    
+
 try:
     from south.modelsinspector import add_introspection_rules
     add_introspection_rules([], ['^jsonfield\.fields\.JSONField'])

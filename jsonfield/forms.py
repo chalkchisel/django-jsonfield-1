@@ -20,7 +20,7 @@ class JSONFormField(forms.CharField):
         """
         if not value:
             return value
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             try:
                 return json.loads(value)
             except Exception as exc:
