@@ -1,6 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models, DatabaseError, transaction
-from django.utils import simplejson as json
+import json
 from django.utils.translation import ugettext_lazy as _
 
 from decimal import Decimal
