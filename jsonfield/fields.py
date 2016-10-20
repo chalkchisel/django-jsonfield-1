@@ -6,9 +6,9 @@ from django.utils.translation import ugettext_lazy as _
 from decimal import Decimal
 import datetime, pyodbc
 
-from utils import default
-from widgets import JSONWidget
-from forms import JSONFormField
+from .utils import default
+from .widgets import JSONWidget
+from .forms import JSONFormField
 
 class JSONField(models.Field):
     """
