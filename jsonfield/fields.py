@@ -69,7 +69,7 @@ class JSONField(models.Field):
             return 'json'
     
     def to_python(self, value):
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             if value == "":
                 if self.null:
                     return None
