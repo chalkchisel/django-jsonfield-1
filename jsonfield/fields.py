@@ -64,7 +64,13 @@ class JSONField(models.Field):
             cursor.execute('SELECT \'{"a":"json object"}\'::json;')
         except (DatabaseError, pyodbc.ProgrammingError):
             transaction.savepoint_rollback(sid)
-            return 'nvarchar(max)'
+            # use a nvarchar column type for SQL Server than text
+            # because MSSQL does not support equal to operations
+            # on text columns
+            if connection.vendor in ('microsoft', 'mssql'):
+                return 'nvarchar(max)'
+            else:
+                return 'text'
         else:
             return 'json'
 
