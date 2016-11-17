@@ -8,11 +8,10 @@ class JSONWidget(forms.Textarea):
     def render(self, name, value, attrs=None):
         if value is None:
             value = ""
-        if not isinstance(value, basestring):
+        if not isinstance(value, str):
             value = json.dumps(value, indent=2, default=default)
         return super(JSONWidget, self).render(name, value, attrs)
 
 
 class JSONSelectWidget(forms.SelectMultiple):
     pass
-
